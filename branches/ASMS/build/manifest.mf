@@ -1,0 +1,8 @@
+MIDlet-1: ASMS,/resources/ASMS Logo.png,asms.ASMS
+MIDlet-Permissions: javax.wireless.messaging.sms.send, javax.wireless.messaging.sms.receive
+MIDlet-Vendor: MPMobile
+serverPort: 50000
+MIDlet-Name: ASMS
+MIDlet-Version: 1.1
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
