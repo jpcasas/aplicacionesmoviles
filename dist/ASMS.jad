@@ -1,0 +1,10 @@
+MIDlet-1: ASMS,/resources/ASMS Logo.png,asms.ASMS
+MIDlet-Jar-Size: 160853
+MIDlet-Jar-URL: ASMS.jar
+MIDlet-Name: ASMS
+MIDlet-Permissions: javax.wireless.messaging.sms.send, javax.wireless.messaging.sms.receive
+MIDlet-Vendor: MPMobile
+MIDlet-Version: 1.1
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+serverPort: 50000
