@@ -16,7 +16,6 @@ import org.netbeans.microedition.lcdui.SimpleTableModel;
 import org.netbeans.microedition.lcdui.SplashScreen;
 import org.netbeans.microedition.lcdui.TableItem;
 import org.netbeans.microedition.lcdui.WaitScreen;
-import org.netbeans.microedition.lcdui.wma.SMSComposer;
 import org.netbeans.microedition.util.SimpleCancellableTask;
 
 /**
@@ -27,24 +26,27 @@ public class ASMS extends MIDlet implements CommandListener {
     private boolean midletPaused = false;
     //<editor-fold defaultstate="collapsed" desc=" Generated Fields ">//GEN-BEGIN:|fields|0|
     private List menu;
-    private SMSComposer smsComposer;
     private SplashScreen splashScreen;
     private Form conversationForm;
-    private TableItem tableItem;
     private List conversationsMenu;
     private Alert messageReceivedAlert;
     private WaitScreen waitScreen;
     private Alert messageSentAlert;
     private Alert messageNotSentAlert;
+    private Form smsComposer;
+    private TextField destinationTextField;
+    private Spacer spacer;
+    private TextField messageTextField;
     private Command menuExitCommand;
     private Command menuOkCommand;
-    private Command smsComposerCancelCommand;
     private Command conversationsMenuBackCommand;
     private Command conversationsMenuOkCommand;
     private Command conversationFormBackCommand;
-    private Command messageReceivedOkCommand;
+    private Command messageReceivedShowCommand;
     private Command messageReceivedCancelCommand;
-    private Command errorAlertExitCommand;
+    private Command sendMessageCommand;
+    private Command smsComposerCancelCommand;
+    private Command replyCommand;
     private Image asmsImage;
     private Image createMessageImage;
     private Font menuFont;
@@ -59,14 +61,19 @@ public class ASMS extends MIDlet implements CommandListener {
     private RecordStore rs;
     static final String REC_STORE = "asms_rms";
     private boolean done;
-    private MessageConnection smsConnection;
-    private String senderAddress;
-    private String[][] conversation;
+    private MessageConnection incomingConnection;
+    private MessageConnection outgoingConnection;
+    private String[] sentMessage;
+    private String[] receivedMessage;
+    private String port;
 
     /**
      * The ASMS constructor.
      */
     public ASMS() {
+        sentMessage = new String[3];
+        receivedMessage = new String[3];
+        port = getAppProperty("serverPort");
         openRecordStore();
     }
 
@@ -88,7 +95,7 @@ public class ASMS extends MIDlet implements CommandListener {
         } else {
             initialize();
             startMIDlet();
-            connectSMSServer(getAppProperty("serverPort"));
+            incomingConnection = connectSMSServer("", port);
             done = false;
             new Thread(new SMSServer()).start();
         }
@@ -96,11 +103,13 @@ public class ASMS extends MIDlet implements CommandListener {
     }
 
     /* Make a connection */
-    public void connectSMSServer(String port) {
+    public MessageConnection connectSMSServer(String destination, String port) {
         try {
-            smsConnection = (MessageConnection) Connector.open("sms://:" + port);
+            MessageConnection smsConnection = (MessageConnection) Connector.open("sms://" + destination + ":" + port);
+            return smsConnection;
         } catch (Exception e) {
             db(e);
+            return null;
         }
     }
 
@@ -169,83 +178,88 @@ public class ASMS extends MIDlet implements CommandListener {
         if (displayable == conversationForm) {//GEN-BEGIN:|7-commandAction|1|54-preAction
             if (command == conversationFormBackCommand) {//GEN-END:|7-commandAction|1|54-preAction
                 // write pre-action user code here
+                showConversations();
                 switchDisplayable(null, getConversationsMenu());//GEN-LINE:|7-commandAction|2|54-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|3|44-preAction
+                conversationForm = null;
+            } else if (command == replyCommand) {//GEN-LINE:|7-commandAction|3|122-preAction
+                // write pre-action user code here
+                switchDisplayable(null, getSmsComposer());//GEN-LINE:|7-commandAction|4|122-postAction
+                // write post-action user code here
+            }//GEN-BEGIN:|7-commandAction|5|44-preAction
         } else if (displayable == conversationsMenu) {
-            if (command == List.SELECT_COMMAND) {//GEN-END:|7-commandAction|3|44-preAction
+            if (command == List.SELECT_COMMAND) {//GEN-END:|7-commandAction|5|44-preAction
                 // write pre-action user code here
-                conversationsMenuAction();//GEN-LINE:|7-commandAction|4|44-postAction
+                conversationsMenuAction();//GEN-LINE:|7-commandAction|6|44-postAction
                 // write post-action user code here
-            } else if (command == conversationsMenuBackCommand) {//GEN-LINE:|7-commandAction|5|48-preAction
+            } else if (command == conversationsMenuBackCommand) {//GEN-LINE:|7-commandAction|7|48-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|6|48-postAction
+                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|8|48-postAction
                 // write post-action user code here
-            } else if (command == conversationsMenuOkCommand) {//GEN-LINE:|7-commandAction|7|51-preAction
+                conversationsMenu = null;
+            } else if (command == conversationsMenuOkCommand) {//GEN-LINE:|7-commandAction|9|51-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getConversationForm());//GEN-LINE:|7-commandAction|8|51-postAction
+                switchDisplayable(null, getConversationForm());//GEN-LINE:|7-commandAction|10|51-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|9|16-preAction
+                conversationsMenu = null;
+            }//GEN-BEGIN:|7-commandAction|11|16-preAction
         } else if (displayable == menu) {
-            if (command == List.SELECT_COMMAND) {//GEN-END:|7-commandAction|9|16-preAction
+            if (command == List.SELECT_COMMAND) {//GEN-END:|7-commandAction|11|16-preAction
                 // write pre-action user code here
-                menuAction();//GEN-LINE:|7-commandAction|10|16-postAction
+                menuAction();//GEN-LINE:|7-commandAction|12|16-postAction
                 // write post-action user code here
-            } else if (command == menuExitCommand) {//GEN-LINE:|7-commandAction|11|19-preAction
+            } else if (command == menuExitCommand) {//GEN-LINE:|7-commandAction|13|19-preAction
                 // write pre-action user code here
-                exitMIDlet();//GEN-LINE:|7-commandAction|12|19-postAction
+                exitMIDlet();//GEN-LINE:|7-commandAction|14|19-postAction
                 // write post-action user code here
-            } else if (command == menuOkCommand) {//GEN-LINE:|7-commandAction|13|21-preAction
+            } else if (command == menuOkCommand) {//GEN-LINE:|7-commandAction|15|21-preAction
                 // write pre-action user code here
-                menuAction();//GEN-LINE:|7-commandAction|14|21-postAction
+                menuAction();//GEN-LINE:|7-commandAction|16|21-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|15|74-preAction
+            }//GEN-BEGIN:|7-commandAction|17|74-preAction
         } else if (displayable == messageReceivedAlert) {
-            if (command == messageReceivedCancelCommand) {//GEN-END:|7-commandAction|15|74-preAction
+            if (command == messageReceivedCancelCommand) {//GEN-END:|7-commandAction|17|74-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|16|74-postAction
+                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|18|74-postAction
                 // write post-action user code here
-            } else if (command == messageReceivedOkCommand) {//GEN-LINE:|7-commandAction|17|71-preAction
+            } else if (command == messageReceivedShowCommand) {//GEN-LINE:|7-commandAction|19|71-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getConversationForm());//GEN-LINE:|7-commandAction|18|71-postAction
+                showConversation(receivedMessage[0]);
+                switchDisplayable(null, getConversationForm());//GEN-LINE:|7-commandAction|20|71-postAction
                 // write post-action user code here
-                conversationTableModel.setValues(conversation);
-                conversationTableModel.fireTableModelChanged();
-            }//GEN-BEGIN:|7-commandAction|19|26-preAction
+            }//GEN-BEGIN:|7-commandAction|21|116-preAction
         } else if (displayable == smsComposer) {
-            if (command == SMSComposer.SEND_COMMAND) {//GEN-END:|7-commandAction|19|26-preAction
+            if (command == sendMessageCommand) {//GEN-END:|7-commandAction|21|116-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getWaitScreen());//GEN-LINE:|7-commandAction|20|26-postAction
+                switchDisplayable(null, getWaitScreen());//GEN-LINE:|7-commandAction|22|116-postAction
                 // write post-action user code here
-            } else if (command == smsComposerCancelCommand) {//GEN-LINE:|7-commandAction|21|39-preAction
+            } else if (command == smsComposerCancelCommand) {//GEN-LINE:|7-commandAction|23|118-preAction
                 // write pre-action user code here
-                smsComposer.setPhoneNumber("");
-                smsComposer.setMessage("");
-                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|22|39-postAction
+                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|24|118-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|23|29-preAction
+            }//GEN-BEGIN:|7-commandAction|25|29-preAction
         } else if (displayable == splashScreen) {
-            if (command == SplashScreen.DISMISS_COMMAND) {//GEN-END:|7-commandAction|23|29-preAction
+            if (command == SplashScreen.DISMISS_COMMAND) {//GEN-END:|7-commandAction|25|29-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|24|29-postAction
+                switchDisplayable(null, getMenu());//GEN-LINE:|7-commandAction|26|29-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|25|89-preAction
+            }//GEN-BEGIN:|7-commandAction|27|89-preAction
         } else if (displayable == waitScreen) {
-            if (command == WaitScreen.FAILURE_COMMAND) {//GEN-END:|7-commandAction|25|89-preAction
+            if (command == WaitScreen.FAILURE_COMMAND) {//GEN-END:|7-commandAction|27|89-preAction
                 // write pre-action user code here
-                switchDisplayable(getMessageNotSentAlert(), getMenu());//GEN-LINE:|7-commandAction|26|89-postAction
+                switchDisplayable(getMessageNotSentAlert(), getMenu());//GEN-LINE:|7-commandAction|28|89-postAction
                 // write post-action user code here
-            } else if (command == WaitScreen.SUCCESS_COMMAND) {//GEN-LINE:|7-commandAction|27|88-preAction
+            } else if (command == WaitScreen.SUCCESS_COMMAND) {//GEN-LINE:|7-commandAction|29|88-preAction
                 // write pre-action user code here
-                smsComposer.setPhoneNumber("");
-                smsComposer.setMessage("");
-                switchDisplayable(getMessageSentAlert(), getMenu());//GEN-LINE:|7-commandAction|28|88-postAction
+                destinationTextField.setString("");
+                messageTextField.setString("");
+                switchDisplayable(getMessageSentAlert(), getMenu());//GEN-LINE:|7-commandAction|30|88-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|29|7-postCommandAction
-        }//GEN-END:|7-commandAction|29|7-postCommandAction
+            }//GEN-BEGIN:|7-commandAction|31|7-postCommandAction
+        }//GEN-END:|7-commandAction|31|7-postCommandAction
         // write post-action user code here
-    }//GEN-BEGIN:|7-commandAction|30|
-    //</editor-fold>//GEN-END:|7-commandAction|30|
+    }//GEN-BEGIN:|7-commandAction|32|
+    //</editor-fold>//GEN-END:|7-commandAction|32|
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: menu ">//GEN-BEGIN:|14-getter|0|14-preInit
     /**
@@ -286,6 +300,7 @@ public class ASMS extends MIDlet implements CommandListener {
                 // write post-action user code here
             } else if (__selectedString.equals("My conversations")) {//GEN-LINE:|14-action|3|35-preAction
                 // write pre-action user code here
+                showConversations();
                 switchDisplayable(null, getConversationsMenu());//GEN-LINE:|14-action|4|35-postAction
                 // write post-action user code here
             }//GEN-BEGIN:|14-action|5|14-postAction
@@ -293,31 +308,6 @@ public class ASMS extends MIDlet implements CommandListener {
         // enter post-action user code here
     }//GEN-BEGIN:|14-action|6|
     //</editor-fold>//GEN-END:|14-action|6|
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: smsComposer ">//GEN-BEGIN:|24-getter|0|24-preInit
-    /**
-     * Returns an initiliazed instance of smsComposer component.
-     * @return the initialized component instance
-     */
-    public SMSComposer getSmsComposer() {
-        if (smsComposer == null) {//GEN-END:|24-getter|0|24-preInit
-            // write pre-init user code here
-            smsComposer = new SMSComposer(getDisplay());//GEN-BEGIN:|24-getter|1|24-postInit
-            smsComposer.setTitle("New text message");
-            smsComposer.addCommand(SMSComposer.SEND_COMMAND);
-            smsComposer.addCommand(getSmsComposerCancelCommand());
-            smsComposer.setCommandListener(this);
-            smsComposer.setBGColor(-5197578);
-            smsComposer.setFGColor(-16777216);
-            smsComposer.setPort(50000);
-            smsComposer.setSendAutomatically(false);
-            smsComposer.setPhoneNumberLabel("To:");
-            smsComposer.setMessageLabel("Message:");//GEN-END:|24-getter|1|24-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|24-getter|2|
-        return smsComposer;
-    }
-    //</editor-fold>//GEN-END:|24-getter|2|
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: splashScreen ">//GEN-BEGIN:|27-getter|0|27-preInit
     /**
@@ -442,21 +432,6 @@ public class ASMS extends MIDlet implements CommandListener {
     }
     //</editor-fold>//GEN-END:|36-getter|3|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: smsComposerCancelCommand ">//GEN-BEGIN:|38-getter|0|38-preInit
-    /**
-     * Returns an initiliazed instance of smsComposerCancelCommand component.
-     * @return the initialized component instance
-     */
-    public Command getSmsComposerCancelCommand() {
-        if (smsComposerCancelCommand == null) {//GEN-END:|38-getter|0|38-preInit
-            // write pre-init user code here
-            smsComposerCancelCommand = new Command("Cancel", Command.CANCEL, 0);//GEN-LINE:|38-getter|1|38-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|38-getter|2|
-        return smsComposerCancelCommand;
-    }
-    //</editor-fold>//GEN-END:|38-getter|2|
-
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: conversationForm ">//GEN-BEGIN:|42-getter|0|42-preInit
     /**
      * Returns an initiliazed instance of conversationForm component.
@@ -465,8 +440,9 @@ public class ASMS extends MIDlet implements CommandListener {
     public Form getConversationForm() {
         if (conversationForm == null) {//GEN-END:|42-getter|0|42-preInit
             // write pre-init user code here
-            conversationForm = new Form("Conversation", new Item[] { getTableItem() });//GEN-BEGIN:|42-getter|1|42-postInit
+            conversationForm = new Form("Conversation", new Item[] { });//GEN-BEGIN:|42-getter|1|42-postInit
             conversationForm.addCommand(getConversationFormBackCommand());
+            conversationForm.addCommand(getReplyCommand());
             conversationForm.setCommandListener(this);//GEN-END:|42-getter|1|42-postInit
             // write post-init user code here
         }//GEN-BEGIN:|42-getter|2|
@@ -483,13 +459,11 @@ public class ASMS extends MIDlet implements CommandListener {
         if (conversationsMenu == null) {//GEN-END:|43-getter|0|43-preInit
             // write pre-init user code here
             conversationsMenu = new List("My conversations", Choice.IMPLICIT);//GEN-BEGIN:|43-getter|1|43-postInit
-            conversationsMenu.append("", getConversationImage());
             conversationsMenu.addCommand(getConversationsMenuBackCommand());
             conversationsMenu.addCommand(getConversationsMenuOkCommand());
             conversationsMenu.setCommandListener(this);
             conversationsMenu.setSelectCommand(getConversationsMenuOkCommand());
-            conversationsMenu.setSelectedFlags(new boolean[] { false });
-            conversationsMenu.setFont(0, getConversationsMenuFont());//GEN-END:|43-getter|1|43-postInit
+            conversationsMenu.setSelectedFlags(new boolean[] {  });//GEN-END:|43-getter|1|43-postInit
             // write post-init user code here
         }//GEN-BEGIN:|43-getter|2|
         return conversationsMenu;
@@ -502,17 +476,11 @@ public class ASMS extends MIDlet implements CommandListener {
      */
     public void conversationsMenuAction() {//GEN-END:|43-action|0|43-preAction
         // enter pre-action user code here
-        String __selectedString = getConversationsMenu().getString(getConversationsMenu().getSelectedIndex());//GEN-BEGIN:|43-action|1|56-preAction
-        if (__selectedString != null) {
-            if (__selectedString.equals("")) {//GEN-END:|43-action|1|56-preAction
-                // write pre-action user code here
-//GEN-LINE:|43-action|2|56-postAction
-                // write post-action user code here
-            }//GEN-BEGIN:|43-action|3|43-postAction
-        }//GEN-END:|43-action|3|43-postAction
+        String __selectedString = getConversationsMenu().getString(getConversationsMenu().getSelectedIndex());//GEN-LINE:|43-action|1|43-postAction
         // enter post-action user code here
-    }//GEN-BEGIN:|43-action|4|
-    //</editor-fold>//GEN-END:|43-action|4|
+        showConversation(__selectedString);
+    }//GEN-BEGIN:|43-action|2|
+    //</editor-fold>//GEN-END:|43-action|2|
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: conversationsMenuBackCommand ">//GEN-BEGIN:|47-getter|0|47-preInit
     /**
@@ -593,24 +561,6 @@ public class ASMS extends MIDlet implements CommandListener {
     }
     //</editor-fold>//GEN-END:|58-getter|2|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: tableItem ">//GEN-BEGIN:|63-getter|0|63-preInit
-    /**
-     * Returns an initiliazed instance of tableItem component.
-     * @return the initialized component instance
-     */
-    public TableItem getTableItem() {
-        if (tableItem == null) {//GEN-END:|63-getter|0|63-preInit
-            // write pre-init user code here
-            tableItem = new TableItem(getDisplay(), "");//GEN-BEGIN:|63-getter|1|63-postInit
-            tableItem.setLayout(ImageItem.LAYOUT_LEFT | Item.LAYOUT_TOP | Item.LAYOUT_VCENTER | ImageItem.LAYOUT_NEWLINE_BEFORE | Item.LAYOUT_EXPAND | Item.LAYOUT_VEXPAND);
-            tableItem.setModel(getConversationTableModel());
-            tableItem.setValuesFont(getConversationFont());//GEN-END:|63-getter|1|63-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|63-getter|2|
-        return tableItem;
-    }
-    //</editor-fold>//GEN-END:|63-getter|2|
-
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: conversationTableModel ">//GEN-BEGIN:|64-getter|0|64-preInit
     /**
      * Returns an initiliazed instance of conversationTableModel component.
@@ -652,7 +602,7 @@ public class ASMS extends MIDlet implements CommandListener {
             // write pre-init user code here
             messageReceivedAlert = new Alert("Message received", "1 new message", null, AlertType.ALARM);//GEN-BEGIN:|66-getter|1|66-postInit
             messageReceivedAlert.addCommand(getMessageReceivedCancelCommand());
-            messageReceivedAlert.addCommand(getMessageReceivedOkCommand());
+            messageReceivedAlert.addCommand(getMessageReceivedShowCommand());
             messageReceivedAlert.setCommandListener(this);
             messageReceivedAlert.setTimeout(Alert.FOREVER);//GEN-END:|66-getter|1|66-postInit
             // write post-init user code here
@@ -661,18 +611,18 @@ public class ASMS extends MIDlet implements CommandListener {
     }
     //</editor-fold>//GEN-END:|66-getter|2|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: messageReceivedOkCommand ">//GEN-BEGIN:|70-getter|0|70-preInit
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: messageReceivedShowCommand ">//GEN-BEGIN:|70-getter|0|70-preInit
     /**
-     * Returns an initiliazed instance of messageReceivedOkCommand component.
+     * Returns an initiliazed instance of messageReceivedShowCommand component.
      * @return the initialized component instance
      */
-    public Command getMessageReceivedOkCommand() {
-        if (messageReceivedOkCommand == null) {//GEN-END:|70-getter|0|70-preInit
+    public Command getMessageReceivedShowCommand() {
+        if (messageReceivedShowCommand == null) {//GEN-END:|70-getter|0|70-preInit
             // write pre-init user code here
-            messageReceivedOkCommand = new Command("Show", Command.OK, 0);//GEN-LINE:|70-getter|1|70-postInit
+            messageReceivedShowCommand = new Command("Show", Command.OK, 0);//GEN-LINE:|70-getter|1|70-postInit
             // write post-init user code here
         }//GEN-BEGIN:|70-getter|2|
-        return messageReceivedOkCommand;
+        return messageReceivedShowCommand;
     }
     //</editor-fold>//GEN-END:|70-getter|2|
 
@@ -740,7 +690,21 @@ public class ASMS extends MIDlet implements CommandListener {
             sendMessageTask.setExecutable(new org.netbeans.microedition.util.Executable() {
                 public void execute() throws Exception {//GEN-END:|90-getter|1|90-execute
                     // write task-execution user code here
-                    smsComposer.sendSMS();
+                    String destination = destinationTextField.getString();
+                    outgoingConnection = connectSMSServer(destination, port);
+                    try {
+                        TextMessage textMessage = (TextMessage) outgoingConnection.newMessage(MessageConnection.TEXT_MESSAGE);
+                        textMessage.setAddress("sms://" + destination + ":" + port);
+                        textMessage.setPayloadText(messageTextField.getString());
+                        outgoingConnection.send(textMessage);
+                        sentMessage[0] = destination;
+                        sentMessage[1] = textMessage.getTimestamp().toString();
+                        sentMessage[2] = textMessage.getPayloadText();
+                        writeRecord("TO " + sentMessage[0] + " (" + sentMessage[1] + "): " + sentMessage[2]);
+                    } catch (Exception e) {
+                        db(e);
+                    }
+                    closeConnection(outgoingConnection);
                 }//GEN-BEGIN:|90-getter|2|90-postInit
             });//GEN-END:|90-getter|2|90-postInit
             // write post-init user code here
@@ -784,20 +748,114 @@ public class ASMS extends MIDlet implements CommandListener {
     }
     //</editor-fold>//GEN-END:|100-getter|3|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: errorAlertExitCommand ">//GEN-BEGIN:|102-getter|0|102-preInit
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: smsComposer ">//GEN-BEGIN:|111-getter|0|111-preInit
     /**
-     * Returns an initiliazed instance of errorAlertExitCommand component.
+     * Returns an initiliazed instance of smsComposer component.
      * @return the initialized component instance
      */
-    public Command getErrorAlertExitCommand() {
-        if (errorAlertExitCommand == null) {//GEN-END:|102-getter|0|102-preInit
+    public Form getSmsComposer() {
+        if (smsComposer == null) {//GEN-END:|111-getter|0|111-preInit
             // write pre-init user code here
-            errorAlertExitCommand = new Command("Exit", Command.EXIT, 0);//GEN-LINE:|102-getter|1|102-postInit
+            smsComposer = new Form("New text message", new Item[] { getDestinationTextField(), getSpacer(), getMessageTextField() });//GEN-BEGIN:|111-getter|1|111-postInit
+            smsComposer.addCommand(getSendMessageCommand());
+            smsComposer.addCommand(getSmsComposerCancelCommand());
+            smsComposer.setCommandListener(this);//GEN-END:|111-getter|1|111-postInit
             // write post-init user code here
-        }//GEN-BEGIN:|102-getter|2|
-        return errorAlertExitCommand;
+        }//GEN-BEGIN:|111-getter|2|
+        return smsComposer;
     }
-    //</editor-fold>//GEN-END:|102-getter|2|
+    //</editor-fold>//GEN-END:|111-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: destinationTextField ">//GEN-BEGIN:|112-getter|0|112-preInit
+    /**
+     * Returns an initiliazed instance of destinationTextField component.
+     * @return the initialized component instance
+     */
+    public TextField getDestinationTextField() {
+        if (destinationTextField == null) {//GEN-END:|112-getter|0|112-preInit
+            // write pre-init user code here
+            destinationTextField = new TextField("To:", "", 10, TextField.PHONENUMBER);//GEN-LINE:|112-getter|1|112-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|112-getter|2|
+        return destinationTextField;
+    }
+    //</editor-fold>//GEN-END:|112-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: spacer ">//GEN-BEGIN:|113-getter|0|113-preInit
+    /**
+     * Returns an initiliazed instance of spacer component.
+     * @return the initialized component instance
+     */
+    public Spacer getSpacer() {
+        if (spacer == null) {//GEN-END:|113-getter|0|113-preInit
+            // write pre-init user code here
+            spacer = new Spacer(16, 8);//GEN-LINE:|113-getter|1|113-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|113-getter|2|
+        return spacer;
+    }
+    //</editor-fold>//GEN-END:|113-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: messageTextField ">//GEN-BEGIN:|114-getter|0|114-preInit
+    /**
+     * Returns an initiliazed instance of messageTextField component.
+     * @return the initialized component instance
+     */
+    public TextField getMessageTextField() {
+        if (messageTextField == null) {//GEN-END:|114-getter|0|114-preInit
+            // write pre-init user code here
+            messageTextField = new TextField("Message:", "", 160, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);//GEN-BEGIN:|114-getter|1|114-postInit
+            messageTextField.setLayout(ImageItem.LAYOUT_DEFAULT);//GEN-END:|114-getter|1|114-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|114-getter|2|
+        return messageTextField;
+    }
+    //</editor-fold>//GEN-END:|114-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: sendMessageCommand ">//GEN-BEGIN:|115-getter|0|115-preInit
+    /**
+     * Returns an initiliazed instance of sendMessageCommand component.
+     * @return the initialized component instance
+     */
+    public Command getSendMessageCommand() {
+        if (sendMessageCommand == null) {//GEN-END:|115-getter|0|115-preInit
+            // write pre-init user code here
+            sendMessageCommand = new Command("Send", Command.OK, 0);//GEN-LINE:|115-getter|1|115-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|115-getter|2|
+        return sendMessageCommand;
+    }
+    //</editor-fold>//GEN-END:|115-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: smsComposerCancelCommand ">//GEN-BEGIN:|117-getter|0|117-preInit
+    /**
+     * Returns an initiliazed instance of smsComposerCancelCommand component.
+     * @return the initialized component instance
+     */
+    public Command getSmsComposerCancelCommand() {
+        if (smsComposerCancelCommand == null) {//GEN-END:|117-getter|0|117-preInit
+            // write pre-init user code here
+            smsComposerCancelCommand = new Command("Cancel", Command.CANCEL, 0);//GEN-LINE:|117-getter|1|117-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|117-getter|2|
+        return smsComposerCancelCommand;
+    }
+    //</editor-fold>//GEN-END:|117-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: replyCommand ">//GEN-BEGIN:|121-getter|0|121-preInit
+    /**
+     * Returns an initiliazed instance of replyCommand component.
+     * @return the initialized component instance
+     */
+    public Command getReplyCommand() {
+        if (replyCommand == null) {//GEN-END:|121-getter|0|121-preInit
+            // write pre-init user code here
+            replyCommand = new Command("Reply", Command.OK, 0);//GEN-LINE:|121-getter|1|121-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|121-getter|2|
+        return replyCommand;
+    }
+    //</editor-fold>//GEN-END:|121-getter|2|
 
     /**
      * Returns a display instance.
@@ -812,15 +870,13 @@ public class ASMS extends MIDlet implements CommandListener {
         public void run() {
             try {
                 while (!done) {
-                    Message message = smsConnection.receive();
+                    Message message = incomingConnection.receive();
                     if (message instanceof TextMessage) {
                         TextMessage textMessage = (TextMessage) message;
-                        senderAddress = textMessage.getAddress().substring(6);
-
-                        conversation = new String[2][1];
-                        conversation[0][0] = senderAddress + ":";
-                        conversation[1][0] = textMessage.getPayloadText();
-
+                        receivedMessage[0] = textMessage.getAddress().substring(6);
+                        receivedMessage[1] = textMessage.getTimestamp().toString();
+                        receivedMessage[2] = textMessage.getPayloadText();
+                        writeRecord("FROM " + receivedMessage[0] + " (" + receivedMessage[1] + "): " + receivedMessage[2]);
                         switchDisplayable(null, getMessageReceivedAlert());
                     } else {
                         throw new Exception("Received is not a text message");
@@ -841,36 +897,83 @@ public class ASMS extends MIDlet implements CommandListener {
         }
     }
 
-    public void readRecords() {
+    public String[] readRecords() {
         try {
+            String[] records = null;
             RecordEnumeration re = rs.enumerateRecords(null, null, false);
             if (re.numRecords() > 0) {
-                while (re.hasNextElement()) {
-                    String string = new String(re.nextRecord());
-                    // Show records in the form 'ConversationsMenu'
+                records = new String[re.numRecords()];
+                for (int i = 0; i < records.length && re.hasNextElement(); i++) {
+                    records[i] = new String(re.nextRecord());
                 }
             }
             re.destroy();
+            return records;
         } catch (Exception e) {
             db(e);
+            return null;
         }
     }
 
-    private void searchRecordStore(String tfFind) {
+    private void showConversations() {
+        String[] records = readRecords();
+        if (records != null) {
+            if (records.length > 0) {
+                List cm = getConversationsMenu();
+                for (int i = records.length - 1; i >= 0; i--) {
+                    if (records[i].startsWith("TO")) {
+                        cm.append(records[i].substring(3, 13), getConversationsImage());
+                    } else {
+                        cm.append(records[i].substring(5, 15), getConversationsImage());
+                    }
+                }
+            }
+        } else {
+            showAlert("Inbox is empty");
+        }
+    }
+
+    private void showConversation(String destination) {
+        String[] records = searchRecordStore(destination);
+        if (records != null) {
+            if (records.length > 0) {
+                Form cf = getConversationForm();
+                for (int i = records.length - 1; i >= 0; i--) {
+                    cf.append(records[i]);
+                    cf.append(new Spacer(16, 5));
+                }
+            } else {
+                showAlert("No conversation found");
+            }
+        } else {
+            showAlert("Inbox is empty");
+        }
+    }
+
+    private String[] searchRecordStore(String tfFind) {
         try {
+            String[] records = null;
             if (rs.getNumRecords() > 0) {
                 SearchFilter searchFilter = new SearchFilter(tfFind);
                 RecordEnumeration re = rs.enumerateRecords(searchFilter, null, false);
                 if (re.numRecords() > 0) {
-                    while (re.hasNextElement()) {
-                        // Show match in the form 'ConversationForm'
+                    records = new String[re.numRecords()];
+                    for (int i = 0; i < records.length && re.hasNextElement(); i++) {
+                        records[i] = new String(re.nextRecord());
                     }
                 }
                 re.destroy();
+                return records;
             }
+            return null;
         } catch (Exception e) {
             db(e);
+            return null;
         }
+    }
+
+    private void showAlert(String string) {
+        
     }
 
     /**
@@ -885,7 +988,7 @@ public class ASMS extends MIDlet implements CommandListener {
      */
     public void exitMIDlet() {
         done = true;
-        closeConnection();
+        closeConnection(incomingConnection);
         closeRecordStore();
         switchDisplayable(null, null);
         destroyApp(true);
@@ -893,10 +996,9 @@ public class ASMS extends MIDlet implements CommandListener {
     }
 
     /* Close Connection */
-    public void closeConnection() {
+    public void closeConnection(MessageConnection smsConnection) {
         if (smsConnection != null) {
             try {
-                smsConnection.setMessageListener(null);
                 smsConnection.close();
             } catch (Exception e) {
                 db(e);
