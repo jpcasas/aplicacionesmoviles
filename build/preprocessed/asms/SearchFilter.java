@@ -20,7 +20,7 @@ public class SearchFilter implements RecordFilter {
 
     public boolean matches(byte[] candidate) {
         String string = new String(candidate).toLowerCase();
-        if (searchText != null && string.indexOf(searchText) != -1) {
+        if (searchText != null && (string.indexOf(searchText) == 3 || string.indexOf(searchText) == 5)) {
             return true;
         } else {
             return false;
