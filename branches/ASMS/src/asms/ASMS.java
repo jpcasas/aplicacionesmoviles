@@ -14,7 +14,6 @@ import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
 import org.netbeans.microedition.lcdui.SimpleTableModel;
 import org.netbeans.microedition.lcdui.SplashScreen;
-import org.netbeans.microedition.lcdui.TableItem;
 import org.netbeans.microedition.lcdui.WaitScreen;
 import org.netbeans.microedition.util.SimpleCancellableTask;
 
@@ -34,9 +33,9 @@ public class ASMS extends MIDlet implements CommandListener {
     private Alert messageSentAlert;
     private Alert messageNotSentAlert;
     private Form smsComposer;
-    private TextField destinationTextField;
-    private Spacer spacer;
     private TextField messageTextField;
+    private Spacer spacer;
+    private TextField destinationTextField;
     private Command menuExitCommand;
     private Command menuOkCommand;
     private Command conversationsMenuBackCommand;
@@ -44,8 +43,8 @@ public class ASMS extends MIDlet implements CommandListener {
     private Command conversationFormBackCommand;
     private Command messageReceivedShowCommand;
     private Command messageReceivedCancelCommand;
-    private Command sendMessageCommand;
     private Command smsComposerCancelCommand;
+    private Command sendMessageCommand;
     private Command replyCommand;
     private Image asmsImage;
     private Image createMessageImage;
