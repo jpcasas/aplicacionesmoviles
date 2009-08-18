@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN"
+	"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+        
+<svg width="240" height="320" viewBox="0 0 240 320" 
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	version="1.1" baseProfile="tiny">
+            <text transform="matrix(1.1412992,0.0,0.0,1.263239,-13.086298,-4.6868877)"  id="_1" x="21.0" y="33.0" fill="yellow" stroke="black" stroke-width="1" font-size="15">Conversations</text>
+            <g id="list_0" transform="translate(69.0,77.0)" >
+                <g>		<!-- Metadata information. Please don't edit. -->
+                    <text display="none">type=selection</text>
+                    <rect id="list_0_selection" x="5" y="0" rx="4" ry="4" stroke="black" stroke-width="1" fill="rgb(200,200,255)" visibility="inherit" width="229" height="0"/>
+                </g>
+                <g>
+                    <text id="list_0_hidden_text" visibility="hidden" x="10" y="13" stroke="black" font-size="16" font-family="">HIDDEN TEXT</text>
+                    <text display="none">type=hidden_text</text>
+                </g>
+                <g id="list_0_current_selection" >        <!-- Metadata information. Please don't edit. -->
+                    <text display="none">type=current_selection</text>
+                </g>
+                <g id="list_0_content"> 		<!-- Metadata information. Please don't edit. -->
+                    <text display="none">type=content</text>
+                </g>
+                <rect x="0" y="-5" rx="5" ry="5" width="239" height="298" fill="none" stroke="rgb(255,165,0)" stroke-width="1.5" visibility="hidden">
+                    <set attributeName="visibility" attributeType="XML" begin="list_0.focusin" fill="freeze" to="visible"/>
+                    <set attributeName="visibility" attributeType="XML" begin="list_0.focusout" fill="freeze" to="hidden"/>
+                </rect>
+                <g>	        <!-- Metadata information. Please don't edit. -->
+                    <text display="none">type=bound</text>
+                    <rect transform="matrix(0.8935266,0.0,0.0,0.7551244,-58.467636,-22.986069)"  id="list_0_bound" x="5.0" y="0.0" rx="4" ry="4" width="230" height="290" fill="none" stroke="rgb(73,46,55)" stroke-width="1.5"/>
+                </g>
+            </g>
+            <g transform="translate(21.0,294.0)" id="button_0">
+                <image width="334" height="125" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVIAAAB9CAYAAADwWOu4AAAACXBIWXMAAC4jAAAuIwF4pT92AAAA            GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxNJREFUeNrs3U9r03Acx/H8Sp+K            iAd1IDKYAxUV9SIeBPEwLz4uL3oQQcSLqIioUMQx8N/JB7MmTtgEmW3TfIYh6+t1EIRkhxzefL9J            2paqo2ZPBTBQZc+R/S3xBEQ1i2rrk0UUENSOIRVQQEyDkIooIKhBSEUUENN2MS0iCpDFdCSiAGFs            RRQgm0pHLhHAfIuGzJFpFOAIVnsRBei+4lvtAUJCCtDSrO19ZK0HMJECCCmAkAKsiH/dDhVSABMp            gJACCCmAkAIgpABCCiCkAEIKgJACCCmAkAIIKQBCCiCkAEIKIKQACCnA/zGuKj8iCmAiBRBSACEF            WFnjxi1SABMpgJACCCmAkAIgpAD98MkmABMpgJACCCmAkAIgpAB9GVe1p/YAJlIAIQUQUgAhBUBI            AYQUYIjGjS8tAchCWvnRJgCrPYCQAgx5tW+s9gAmUoBeJ1I/NQJgIgXodyJ1ixTARAogpAADX+3t            9gAmUgAhBRjwal9XtasAYCIF6HEi9ckmgDCkjc0eIJ1IlRQgm0ir4ioAZBOpe6QAWUhrqz1AFlKb            PUAW0qa22gNkE6mn9gBhSE2kAOlEKqQAUUhrH20CyELaeP0JIJ1IrfYAUUirauoqACQhndrsAbKQ            Nh42AYQhra32AFFIvUcKYLUH6DukLgJAFlIv5AOEIXWPFMBECtBzSE2kAGFIvUcKkIXUNQAIQ+r9            J4AwpNNdVwEgCmkxkQJkIfXUHiALab3rqT1ANpH60hKANKRWe4C2Tpy+UA6H1EdEAdKJ1D1SgCik            J9culZ9fP9jvAbqG9Pc/Te2lfIBFTp27WmaGtPbFJQCd/anrj+3X1nuAGc6s3yhzV/uDg75/fimm            AEsa//U/Kz7AIWc3bpVWq/2Bb5MXplKAfWubt8tyE+n+SV8mz8UUoKWZpd35+ExMgZV2/uKd0ua4            uQftvH8qpsBqRvTy3dL22IUHbr97IqbAyli/cq8se07rEz69fSyowLG2cW2rdDlvqZMmbx6JKXDs            bF6/X5LzO588efVQVIHhxvPmg3JUf+uXAAMANjzXcWAvxG4AAAAASUVORK5CYII="            transform="matrix(0.20615384,0.0,0.0,0.14400001,0.0,0.0)" id="_20" > </image>
+                <rect transform=""  id="_142" x="0.0" y="0.0" rx="5" ry="5"  width="70" height="18" fill="none" stroke="rgb(73,46,55)" stroke-width="1.5">           </rect>
+                <g>
+                    <text display="none">type=body</text>
+                    <rect id="button_0_body" x="0.0" y="0.0" rx="5" ry="5"  width="70" height="18" fill="none" stroke="rgb(255,165,0)" stroke-width="0">
+                        <animate attributeName="stroke-width" attributeType="XML" begin="button_0.focusin" dur="0.25s" fill="freeze" to="2"/>
+                        <animate attributeName="stroke-width" attributeType="XML" begin="button_0.focusout" dur="0.25s" fill="freeze" to="0"/>                         <!-- The third and fourth animation elements are used for animate button : on press, on release -->
+                        <animate id="button_0_body_pressed" attributeName="stroke" attributeType="XML" begin="indefinite" dur="0.25s" fill="freeze" stroke="rgb(255,165,0)"/>
+                        <animate id="button_0_body_released" attributeName="stroke" attributeType="XML" begin="indefinite" dur="0.25s"  fill="freeze" to="rgb(255,165,0)"/>
+                    </rect>
+                </g>
+                <g>
+                    <text id="button_0_stext" x="19.333328" y="13.666664" fill="black" font-size="13">Back</text>
+                    <text display="none">type=shadow_text</text>
+                </g>
+                <g>
+                    <text id="button_0_text" x="23" y="21" fill="none" font-size="14">		OK</text>
+                    <text display="none">type=text</text>
+                </g>
+            </g>
+            <g transform="translate(145.0,294.0)" id="button_1">
+                <image width="334" height="125" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVIAAAB9CAYAAADwWOu4AAAACXBIWXMAAC4jAAAuIwF4pT92AAAA            GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxNJREFUeNrs3U9r03Acx/H8Sp+K            iAd1IDKYAxUV9SIeBPEwLz4uL3oQQcSLqIioUMQx8N/JB7MmTtgEmW3TfIYh6+t1EIRkhxzefL9J            2paqo2ZPBTBQZc+R/S3xBEQ1i2rrk0UUENSOIRVQQEyDkIooIKhBSEUUENN2MS0iCpDFdCSiAGFs            RRQgm0pHLhHAfIuGzJFpFOAIVnsRBei+4lvtAUJCCtDSrO19ZK0HMJECCCmAkAKsiH/dDhVSABMp            gJACCCmAkAIgpABCCiCkAEIKgJACCCmAkAIIKQBCCiCkAEIKIKQACCnA/zGuKj8iCmAiBRBSACEF            WFnjxi1SABMpgJACCCmAkAIgpAD98MkmABMpgJACCCmAkAIgpAB9GVe1p/YAJlIAIQUQUgAhBUBI            AYQUYIjGjS8tAchCWvnRJgCrPYCQAgx5tW+s9gAmUoBeJ1I/NQJgIgXodyJ1ixTARAogpAADX+3t            9gAmUgAhBRjwal9XtasAYCIF6HEi9ckmgDCkjc0eIJ1IlRQgm0ir4ioAZBOpe6QAWUhrqz1AFlKb            PUAW0qa22gNkE6mn9gBhSE2kAOlEKqQAUUhrH20CyELaeP0JIJ1IrfYAUUirauoqACQhndrsAbKQ            Nh42AYQhra32AFFIvUcKYLUH6DukLgJAFlIv5AOEIXWPFMBECtBzSE2kAGFIvUcKkIXUNQAIQ+r9            J4AwpNNdVwEgCmkxkQJkIfXUHiALab3rqT1ANpH60hKANKRWe4C2Tpy+UA6H1EdEAdKJ1D1SgCik            J9culZ9fP9jvAbqG9Pc/Te2lfIBFTp27WmaGtPbFJQCd/anrj+3X1nuAGc6s3yhzV/uDg75/fimm            AEsa//U/Kz7AIWc3bpVWq/2Bb5MXplKAfWubt8tyE+n+SV8mz8UUoKWZpd35+ExMgZV2/uKd0ua4            uQftvH8qpsBqRvTy3dL22IUHbr97IqbAyli/cq8se07rEz69fSyowLG2cW2rdDlvqZMmbx6JKXDs            bF6/X5LzO588efVQVIHhxvPmg3JUf+uXAAMANjzXcWAvxG4AAAAASUVORK5CYII="            transform="matrix(0.20615384,0.0,0.0,0.14400001,0.0,0.0)" id="_20_0" > </image>
+                <rect transform=""  id="_142_0" x="0.0" y="0.0" rx="5" ry="5"  width="70" height="18" fill="none" stroke="rgb(73,46,55)" stroke-width="1.5">           </rect>
+                <g>
+                    <text display="none">type=body</text>
+                    <rect id="button_1_body" x="0.0" y="0.0" rx="5" ry="5"  width="70" height="18" fill="none" stroke="rgb(255,165,0)" stroke-width="0">
+                        <animate attributeName="stroke-width" attributeType="XML" begin="button_1.focusin" dur="0.25s" fill="freeze" to="2"/>
+                        <animate attributeName="stroke-width" attributeType="XML" begin="button_1.focusout" dur="0.25s" fill="freeze" to="0"/>                         <!-- The third and fourth animation elements are used for animate button : on press, on release -->
+                        <animate id="button_1_body_pressed" attributeName="stroke" attributeType="XML" begin="indefinite" dur="0.25s" fill="freeze" stroke="rgb(255,165,0)"/>
+                        <animate id="button_1_body_released" attributeName="stroke" attributeType="XML" begin="indefinite" dur="0.25s"  fill="freeze" to="rgb(255,165,0)"/>
+                    </rect>
+                </g>
+                <g>
+                    <text id="button_1_stext" x="19.333328" y="13.666664" fill="black" font-size="13">		Select</text>
+                    <text display="none">type=shadow_text</text>
+                </g>
+                <g>
+                    <text id="button_1_text" x="23" y="21" fill="none" font-size="14">		OK</text>
+                    <text display="none">type=text</text>
+                </g>
+            </g>
+</svg>
